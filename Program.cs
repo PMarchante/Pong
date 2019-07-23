@@ -4,32 +4,48 @@ namespace SpaceGame
 {
     class Program
     {
-
-        public void gameSpace()
+        int paddleLocation = 6;
+        public void gameSpace(ConsoleKey input)
         {
-            String paddle = "|";
+            String paddle = "P";
             String ball = "*";
-            int paddleLocation = 5;
             string wall = "                                                            |";
+            string paddleWall = "                                                           |";
             string[,] space = new string[20, 30];
+
+            Console.Clear();
+            if (input == ConsoleKey.UpArrow)
+            {
+                paddleLocation++;
+
+            }
+
+            if (input == ConsoleKey.DownArrow)
+            {
+                paddleLocation--;
+
+            }
 
             for (int x = 0; x < 20; x++)
             {
+                bool paddleHere = false;
+                space[paddleLocation, 5] = paddle;
 
+
+                if (x == paddleLocation)
+                {
+                    paddleHere = true;
+                    space[x, 6] = paddleWall;
+                }
                 Console.Write("\n");
                 for (int y = 0; y < 30; y++)
                 {
 
-                    space[5, 5] = paddle;
-                    if (y >= 29)
+                    if (y >= 29 && !paddleHere)
                     {
                         space[x, y] = wall;
-
-                        if (paddleLocation == x)
-                        {
-                            space[x, y] = wall.Replace(wall, "                                                           |");
-                        }
                     }
+
 
                     if (x == 0 || x == 19)
                     {
@@ -50,10 +66,11 @@ namespace SpaceGame
 
             while (Console.ReadKey().Key != ConsoleKey.Escape)
             {
-                //clears console and redraws
-                Console.Clear();
-                test.gameSpace();
+                //Console.Clear();
+                test.gameSpace(Console.ReadKey().Key);
+
             }
+
 
         }
     }
