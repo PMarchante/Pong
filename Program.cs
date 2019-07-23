@@ -4,7 +4,7 @@ namespace SpaceGame
 {
     class Program
     {
-        int paddleLocation = 6;
+        int paddleLocation = 10;
         public void gameSpace(ConsoleKey input)
         {
             String paddle = "P";
@@ -14,15 +14,15 @@ namespace SpaceGame
             string[,] space = new string[20, 30];
 
             Console.Clear();
-            if (input == ConsoleKey.UpArrow)
+            if (input == ConsoleKey.UpArrow && (paddleLocation >= 1 && paddleLocation <= 19))
             {
-                paddleLocation++;
+                paddleLocation--;
 
             }
 
-            if (input == ConsoleKey.DownArrow)
+            if (input == ConsoleKey.DownArrow && (paddleLocation >= 1 && paddleLocation <= 19))
             {
-                paddleLocation--;
+                paddleLocation++;
 
             }
 
