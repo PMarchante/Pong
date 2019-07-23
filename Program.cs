@@ -5,37 +5,12 @@ namespace SpaceGame
     class Program
     {
 
-        public char[][] gameSpace()
+        public void gameSpace()
         {
-            char[][] space = new char[30][];
-
-            for (int x = 0; x < space.Length; x++)
-            {
-
-
-                for (int y = 0; y < space.Length; y++)
-                {
-                    //if (x == 30)
-                    space[x][y] = '-';
-                }
-                Console.WriteLine(space);
-            }
-
-            return space;
-        }
-
-
-
-        static void Main(string[] args)
-        {
-            /*
-            Program test = new Program();
-            for (int x = 0; x == 100; x++)
-            {
-                Console.WriteLine(test.gameSpace());
-            }
-            */
-
+            String paddle = "|";
+            String ball = "*";
+            int paddleLocation = 5;
+            string wall = "                                                            |";
             string[,] space = new string[20, 30];
 
             for (int x = 0; x < 20; x++)
@@ -44,9 +19,16 @@ namespace SpaceGame
                 Console.Write("\n");
                 for (int y = 0; y < 30; y++)
                 {
+
+                    space[5, 5] = paddle;
                     if (y >= 29)
                     {
-                        space[x, y] = "                                                            |";
+                        space[x, y] = wall;
+
+                        if (paddleLocation == x)
+                        {
+                            space[x, y] = wall.Replace(wall, "                                                           |");
+                        }
                     }
 
                     if (x == 0 || x == 19)
@@ -56,9 +38,22 @@ namespace SpaceGame
 
                     Console.Write(space[x, y]);
                 }
-
             }
+        }
 
+
+
+
+        static void Main(string[] args)
+        {
+            Program test = new Program();
+
+            while (Console.ReadKey().Key != ConsoleKey.Escape)
+            {
+                //clears console and redraws
+                Console.Clear();
+                test.gameSpace();
+            }
 
         }
     }
