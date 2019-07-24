@@ -1,17 +1,19 @@
 ﻿using System;
 
+
 namespace SpaceGame
 {
     class Program
     {
         int paddleLocation = 10;
+        int ballLocation = 7;
         public void gameSpace(ConsoleKey input)
         {
             String paddle = "P";
             String ball = "*";
-            string wall = "                                                            |";
-            string paddleWall = "                                                           |";
-            string[,] space = new string[20, 30];
+            string wall = "|";
+            string paddleWall = " |";
+            string[,] space = new string[20, 20];
 
             Console.Clear();
             if ((input == ConsoleKey.UpArrow && (paddleLocation >= 2 && paddleLocation <= 19)))
@@ -26,29 +28,38 @@ namespace SpaceGame
                 Console.WriteLine("in if " + paddleLocation);
             }
 
-            for (int x = 0; x < 20; x++)
+            for (int y = 0; y < 20; y++)
             {
                 bool paddleHere = false;
                 space[paddleLocation, 5] = paddle;
 
 
-                if (x == paddleLocation)
+                if (y == paddleLocation)
                 {
                     paddleHere = true;
-                    space[paddleLocation, 6] = paddleWall;
+                    //space[paddleLocation, 6] = paddleWall;
                 }
                 Console.Write("\n");
-                for (int y = 0; y < 30; y++)
+                for (int x = 0; x < 20; x++)
                 {
+                    if (!paddleHere)
+                    {
+                        space[x, y] = "";
 
-                    if (y >= 29 && !paddleHere)
+                    }
+                    if (paddleHere)
+                    {
+                        space[paddleLocation, 19] = "N";
+                    }
+
+                    if (y >= 19)
                     {
                         space[x, y] = wall;
                     }
 
                     if (x == 0 || x == 19)
                     {
-                        space[x, y] = "__";
+                        space[x, y] = "_";
                     }
 
                     Console.Write(space[x, y]);
@@ -63,12 +74,17 @@ namespace SpaceGame
         {
             Program test = new Program();
 
-            while (Console.ReadKey().Key != ConsoleKey.Escape)
+            do
             {
-                //Console.Clear();
+                //Console.WriteLine("WELCOME TO PONG!");
                 test.gameSpace(Console.ReadKey().Key);
-
             }
+            while (true);
+
+
+
+
+
 
 
         }
