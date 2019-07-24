@@ -14,16 +14,16 @@ namespace SpaceGame
             string[,] space = new string[20, 30];
 
             Console.Clear();
-            if (input == ConsoleKey.UpArrow && (paddleLocation >= 1 && paddleLocation <= 19))
+            if ((input == ConsoleKey.UpArrow && (paddleLocation >= 2 && paddleLocation <= 19)))
             {
                 paddleLocation--;
-
+                Console.WriteLine("in if " + paddleLocation);
             }
 
-            if (input == ConsoleKey.DownArrow && (paddleLocation >= 1 && paddleLocation <= 19))
+            if ((input == ConsoleKey.DownArrow && (paddleLocation >= 1 && paddleLocation <= 18)))
             {
                 paddleLocation++;
-
+                Console.WriteLine("in if " + paddleLocation);
             }
 
             for (int x = 0; x < 20; x++)
@@ -35,7 +35,7 @@ namespace SpaceGame
                 if (x == paddleLocation)
                 {
                     paddleHere = true;
-                    space[x, 6] = paddleWall;
+                    space[paddleLocation, 6] = paddleWall;
                 }
                 Console.Write("\n");
                 for (int y = 0; y < 30; y++)
@@ -45,7 +45,6 @@ namespace SpaceGame
                     {
                         space[x, y] = wall;
                     }
-
 
                     if (x == 0 || x == 19)
                     {
