@@ -6,7 +6,7 @@ namespace SpaceGame
     class Program
     {
         int paddleLocation = 10;
-        int ballLocation = 0;
+        int ballLocation = 9;
         int height = 20;
         int length = 30;
         public void gameSpace(ConsoleKey input)
@@ -22,25 +22,30 @@ namespace SpaceGame
             if ((input == ConsoleKey.UpArrow && (paddleLocation >= 2 && paddleLocation <= height)))
             {
                 paddleLocation--;
+                ballLocation++;
                 Console.WriteLine("in if " + paddleLocation);
             }
 
             if ((input == ConsoleKey.DownArrow && (paddleLocation >= 1 && paddleLocation <= height - 3)))
             {
                 paddleLocation++;
+                ballLocation--;
                 Console.WriteLine("in if " + paddleLocation);
             }
 
             for (int y = 0; y < height; y++)
             {
                 bool paddleHere = false;
+                bool ballHere = false;
 
                 Console.Write("\n");
                 for (int x = 0; x < length; x++)
                 {
                     if (y == paddleLocation) { paddleHere = true; }
+                    if (y + 1 == ballLocation) { ballHere = true; }
                     space[1, paddleLocation] = paddle;
 
+                    //space[1, ballLocation] = ball;
                     if (paddleHere && x < length - 1)
                     {
                         space[x + 1, y] = " ";
@@ -59,6 +64,7 @@ namespace SpaceGame
                         {
                             space[x, y] = paddleWall;
                         }
+
                     }
 
                     //draws the top and bottom lines of the game board
@@ -81,6 +87,7 @@ namespace SpaceGame
             while (true)
             {
                 test.gameSpace(Console.ReadKey().Key);
+
             }
 
 
