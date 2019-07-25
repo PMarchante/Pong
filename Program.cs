@@ -6,7 +6,8 @@ namespace SpaceGame
     class Program
     {
         int paddleLocation = 10;
-        int ballLocation = 9;
+        int ballLocationY = 11;
+        int ballLocationX = 2;
         int height = 20;
         int length = 30;
         public void gameSpace(ConsoleKey input)
@@ -22,14 +23,16 @@ namespace SpaceGame
             if ((input == ConsoleKey.UpArrow && (paddleLocation >= 2 && paddleLocation <= height)))
             {
                 paddleLocation--;
-                ballLocation++;
+                ballLocationY++;
+                ballLocationX--;
                 Console.WriteLine("in if " + paddleLocation);
             }
 
             if ((input == ConsoleKey.DownArrow && (paddleLocation >= 1 && paddleLocation <= height - 3)))
             {
                 paddleLocation++;
-                ballLocation--;
+                ballLocationY--;
+                ballLocationX++;
                 Console.WriteLine("in if " + paddleLocation);
             }
 
@@ -42,16 +45,18 @@ namespace SpaceGame
                 for (int x = 0; x < length; x++)
                 {
                     if (y == paddleLocation) { paddleHere = true; }
-                    if (y + 1 == ballLocation) { ballHere = true; }
+                    if (y == ballLocationY || x == ballLocationX) { ballHere = true; }
+
                     space[1, paddleLocation] = paddle;
 
-                    //space[1, ballLocation] = ball;
-                    if (paddleHere && x < length - 1)
+                    space[ballLocationX, ballLocationY] = ball;
+
+                    if ((paddleHere || ballHere) && x < length - 1)
                     {
                         space[x + 1, y] = " ";
                     }
                     //fills in the game board with spaces
-                    if (x < length && !paddleHere)
+                    if ((x < length && !paddleHere && !ballHere))
                     {
                         space[x, y] = " ";
                     }
@@ -60,7 +65,7 @@ namespace SpaceGame
                     if (x == length - 1)
                     {
                         space[x, y] = wall;
-                        if (paddleHere)
+                        if (paddleHere || ballHere)
                         {
                             space[x, y] = paddleWall;
                         }
