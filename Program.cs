@@ -3,8 +3,26 @@ using System.Threading;
 
 namespace Pong
 {
+   public class Paddle
+{
+        public int yPosition;
+        public string icon ="[";
+        public Paddle(int yPosition)
+        {
+            this.yPosition=yPosition;
+            
+        }
+        
+}
+
+    public class Ball
+    {
+        public string icon = "*";
+        
+    }
     class Program
     {
+
         int paddleLocation = 10;
         int ballLocationY = 11;
         int ballLocationX = 2;
@@ -13,10 +31,11 @@ namespace Pong
         bool hitWall = false;
         bool hitBkWall = false;
         bool goingBack = false;
-        public void gameSpace(ConsoleKey input)
+        public void gameSpace(ConsoleKey input, Paddle paddle, Ball ball)
         {
-            String paddle = "P";
-            String ball = "*";
+            paddle = new Paddle(height / 2);
+            ball = new Ball();
+            
             string wall = "|";
             string paddleWall = " |";
             string[,] space = new string[length, height];
@@ -113,9 +132,9 @@ namespace Pong
                     //
                     if (y == ballLocationY || x == ballLocationX) { ballHere = true; }
 
-                    space[1, paddleLocation] = paddle;
+                    space[1, paddleLocation] = paddle.icon;
 
-                    space[ballLocationX, ballLocationY] = ball;
+                    space[ballLocationX, ballLocationY] = ball.icon;
 
                     if ((paddleHere || ballHere) && x < length - 1)
                     {
@@ -156,9 +175,11 @@ namespace Pong
         static void Main(string[] args)
         {
             Program test = new Program();
+            Paddle p = new Paddle(2);
+            Ball b = new Ball();
             while (true)
             {
-                test.gameSpace(Console.ReadKey().Key);
+                test.gameSpace(Console.ReadKey().Key, p,b);
 
             }
 
