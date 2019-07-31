@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 
-namespace SpaceGame
+namespace Pong
 {
     class Program
     {
