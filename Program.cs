@@ -1,189 +1,221 @@
 ﻿using System;
 using System.Threading;
-
+using System.Threading.Tasks;
 namespace Pong
 {
-   public class Paddle
-{
+    public class Paddle
+    {
         public int yPosition;
-        public string icon ="[";
+        public string icon = "[ ";
         public Paddle(int yPosition)
         {
-            this.yPosition=yPosition;
-            
+            this.yPosition = yPosition;
         }
-        
-}
+        public void movePadUp()
+        {
+            yPosition--;
+        }
+        public void movePadDown()
+        {
+            yPosition++;
+        }
+
+    }
 
     public class Ball
     {
         public string icon = "*";
-        
-    }
-    class Program
-    {
+        public int ballLocationY = 10;
+        public int ballLocationX = 2;
 
-        int paddleLocation = 10;
-        int ballLocationY = 11;
-        int ballLocationX = 2;
-        int height = 20;
-        int length = 30;
-        bool hitWall = false;
-        bool hitBkWall = false;
-        bool goingBack = false;
-        public void gameSpace(ConsoleKey input, Paddle paddle, Ball ball)
+        public Ball() { }
+
+        public Ball(int ballLocationY, int ballLocationX)
         {
-            paddle = new Paddle(height / 2);
-            ball = new Ball();
-            
-            string wall = "|";
-            string paddleWall = " |";
+            this.ballLocationX = ballLocationX;
+            this.ballLocationY = ballLocationY;
+        }
+        public int moveBallXCoord()
+        {
+            return ballLocationX++;
+        }
+
+        public int moveBallYCoord()
+        {
+            return ballLocationY++;
+        }
+
+    }
+
+    class Display
+    {
+        string bkWall = "|";
+        string topNBotWall = "-";
+        int fps = 0;
+        public string[,] gameSpace(int length, int height, Ball ball, Paddle paddle, ConsoleKey input)
+        {
+
             string[,] space = new string[length, height];
-
             Console.Clear();
+            Console.WriteLine($"fps: {fps++}");
 
-            if ((input == ConsoleKey.UpArrow && (paddleLocation >= 2 && paddleLocation <= height)))
+            if (input == ConsoleKey.UpArrow)
             {
-                paddleLocation--;
-
-                Console.WriteLine("in if " + paddleLocation);
-            }
-
-            if ((input == ConsoleKey.DownArrow && (paddleLocation >= 1 && paddleLocation <= height - 3)))
-            {
-                paddleLocation++;
-
-                Console.WriteLine("in if " + paddleLocation);
-            }
-
-            //pressing spacebar makes ball travel up diagnal
-            if ((ballLocationY >= 1 && ballLocationX <= (length - 1)) && !hitWall)
-            {
-                Console.WriteLine("inside first if");
-                switch (hitBkWall)
-                {
-                    case false:
-                        ballLocationX++;
-                        ballLocationY--;
-                        Console.WriteLine("inside first case");
-                        break;
-
-                    case true:
-                        ballLocationX--;
-                        ballLocationY--;
-                        Console.WriteLine($"inside 2nd case x{ballLocationX} y{ballLocationY}");
-                        if (ballLocationY == 1 || ballLocationY == (height - 1))
-                        {
-                            hitWall = true;
-                            hitBkWall = false;
-                            goingBack = true;
-                        }
-                        break;
-                }
-
-
-            }
-            if (goingBack)
-            {
-                ballLocationX--;
-                ballLocationY++;
-            }
-            if ((ballLocationX + 1) == paddleLocation || (ballLocationY + 1 == paddleLocation) || (ballLocationX + 2) == paddleLocation || (ballLocationY + 2 == paddleLocation))
-            {
-                goingBack = false;
-                ballLocationX++;
-                ballLocationY--;
-            }
-
-            if ((ballLocationY == 1 || ballLocationY == (height - 3) || hitWall) && !hitBkWall && !goingBack)
-            {
-                //Console.WriteLine($"in spacebar wall hit if x{ballLocationX} y{ballLocationY}");
-                ballLocationX++;
-                ballLocationY++;
-                hitWall = true;
-                hitBkWall = false;
-            }
-            if (hitWall && ballLocationY == (height - 2))
-            {
-                ballLocationY--;
-                ballLocationX++;
-            }
-            //checks if ball hit back wall
-            if (ballLocationX == (length - 2) && (ballLocationY >= 1 || ballLocationY <= (height - 3)))
-            {
-                //Console.WriteLine($"in spacebar hit back wall if x{ballLocationX} y{ballLocationY}");
-                ballLocationX--;
-                ballLocationY--;
-                hitBkWall = true;
-                hitWall = false;
+                paddle.movePadUp();
             }
 
             for (int y = 0; y < height; y++)
             {
-                bool paddleHere = false;
-                bool ballHere = false;
 
                 Console.Write("\n");
                 for (int x = 0; x < length; x++)
                 {
-                    //if the paddle is located in this y coordinate
-                    if (y == paddleLocation) { paddleHere = true; }
 
-                    //
-                    if (y == ballLocationY || x == ballLocationX) { ballHere = true; }
 
-                    space[1, paddleLocation] = paddle.icon;
-
-                    space[ballLocationX, ballLocationY] = ball.icon;
-
-                    if ((paddleHere || ballHere) && x < length - 1)
+                    //fills gameboard with space
+                    if (y >= 1 && y < height - 1)
                     {
-                        space[x + 1, y] = " ";
+                        if ((y == paddle.yPosition && x < length - 1))
+                        {
+                            space[1, paddle.yPosition] = paddle.icon;
+                            space[(x + 1), paddle.yPosition] = " ";
+                        }
+                        else
+                            space[x, y] = " ";
                     }
-
-                    //fills in the game board with spaces
-                    if ((x < length && !paddleHere && !ballHere))
-                    {
-                        space[x, y] = " ";
-                    }
-
-                    //places the wall at the end of the gameboard
+                    //draws back wall
                     if (x == length - 1)
                     {
-                        space[x, y] = wall;
-                        if (paddleHere || ballHere)
-                        {
-                            space[x, y] = paddleWall;
-                        }
-
+                        space[x, y] = bkWall;
                     }
-
                     //draws the top and bottom lines of the game board
                     if (y == 0 || (y == height - 1))
                     {
-                        space[x, y] = "-";
+                        space[x, y] = topNBotWall;
                     }
 
                     Console.Write(space[x, y]);
                 }
+
             }
+            //Thread.Sleep(1000);
+            return space;
+        }
+    }
+    class Program
+    {
+        int height = 20;
+        int length = 30;
+        string bkWall = "|";
+        string topNBotWall = "-";
+        int fps = 0;
+        /*
+    public void gameSpace(ConsoleKey input, Paddle paddle, Ball ball)
+    {
+
+
+        string[,] space = new string[length, height];
+
+        Console.Clear();
+        Console.WriteLine($"fps: {fps}\n");
+        if (input == ConsoleKey.UpArrow && paddle.yPosition >= 2)
+        {
+            paddle.movePadUp();
+
+        }
+        if (input == ConsoleKey.DownArrow && paddle.yPosition < (height - 2))
+        {
+            paddle.movePadDown();
+
         }
 
+
+
+        for (int y = 0; y < height; y++)
+        {
+
+            bool paddleHere = false;
+            bool ballHere = false;
+
+            Console.Write("\n");
+            for (int x = 0; x < length; x++)
+            {
+
+
+                //fills gameboard with space
+                if (y >= 1 && y < height - 1)
+                {
+                    //places the paddle on the board
+                    if ((y == paddle.yPosition && x < length - 1))
+                    {
+                        space[1, paddle.yPosition] = paddle.icon;
+                        space[(x + 1), paddle.yPosition] = " ";
+                        paddleHere = true;
+
+                    }
+
+                    else
+                        space[x, y] = " ";
+
+                    if (y == ball.ballLocationY && x == ball.ballLocationX)
+                    {
+                        space[ball.ballLocationX, ball.ballLocationY] = ball.icon;
+
+                        if (ball.ballLocationX >= 1 && ball.ballLocationY == 1)
+                        {
+                            Console.WriteLine("hit top wall");
+                        }
+
+                    }
+
+                }
+                //draws back wall
+                if (x == length - 1)
+                {
+                    space[x, y] = bkWall;
+                }
+                //draws the top and bottom lines of the game board
+                if (y == 0 || (y == height - 1))
+                {
+                    space[x, y] = topNBotWall;
+                }
+
+                Console.Write(space[x, y]);
+            }
+
+            fps++;
+
+
+            Thread.Sleep(1000);
+        }
+
+    }
+    */
 
 
 
         static void Main(string[] args)
         {
             Program test = new Program();
-            Paddle p = new Paddle(2);
+            Paddle p = new Paddle(10);
             Ball b = new Ball();
+            Display display = new Display();
+            ConsoleKey input = Console.ReadKey().Key;
+
+
+            Task.Run(async () =>
+            {
+
+                while (true)
+                {
+                    display.gameSpace(25, 20, b, p, input);
+                    await Task.Delay(1000);
+                }
+            });
             while (true)
             {
-                test.gameSpace(Console.ReadKey().Key, p,b);
 
             }
-
-
 
 
 
