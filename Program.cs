@@ -49,40 +49,66 @@ namespace Pong
 
     class Display
     {
-        string bkWall = "|";
+        string bkWall = " |";
         string topNBotWall = "-";
         int fps = 0;
-        public string[,] gameSpace(int length, int height, Ball ball, Paddle paddle, ConsoleKey input)
+        bool ballHere = false;
+        bool paddleHere = false;
+        public string[,] gameSpace(int length, int height, Ball ball, Paddle paddle)
         {
-
+            
             string[,] space = new string[length, height];
             Console.Clear();
             Console.WriteLine($"fps: {fps++}");
-
-            if (input == ConsoleKey.UpArrow)
-            {
-                paddle.movePadUp();
-            }
-
+            
+            
             for (int y = 0; y < height; y++)
             {
-
+                
                 Console.Write("\n");
                 for (int x = 0; x < length; x++)
                 {
-
+                    if (x == ball.ballLocationX && y == ball.ballLocationY)
+                    {
+                        space[ball.ballLocationX, ball.ballLocationY] = ball.icon;
+                        ballHere = true;
+                    }
 
                     //fills gameboard with space
-                    if (y >= 1 && y < height - 1)
+                    if ((y >= 1 && y < height - 1))
                     {
                         if ((y == paddle.yPosition && x < length - 1))
                         {
+                            
                             space[1, paddle.yPosition] = paddle.icon;
-                            space[(x + 1), paddle.yPosition] = " ";
+                          
+                            paddleHere = true;
                         }
-                        else
-                            space[x, y] = " ";
+
                     }
+
+                    //whereever the paddle and ball are not located, place an empty space
+                    if (y != paddle.yPosition && y != ball.ballLocationY && x != ball.ballLocationX)
+                    {
+                        space[x, y] = " ";
+                    }
+                    //adds spaces to line up back wall
+                    if (x < length - 2)
+                    {
+                        space[(x + 1), ball.ballLocationY] = " ";
+                        if (x < length - 3)
+                        {
+                            space[(x + 1), paddle.yPosition] = " ";
+                            
+                        }
+                        if (space[x, y] == paddle.icon && space[(x), y] == ball.icon)
+                        {
+                            Console.WriteLine("ok");
+                        }
+
+                    }
+
+                    
                     //draws back wall
                     if (x == length - 1)
                     {
@@ -98,7 +124,7 @@ namespace Pong
                 }
 
             }
-            //Thread.Sleep(1000);
+            
             return space;
         }
     }
@@ -109,90 +135,6 @@ namespace Pong
         string bkWall = "|";
         string topNBotWall = "-";
         int fps = 0;
-        /*
-    public void gameSpace(ConsoleKey input, Paddle paddle, Ball ball)
-    {
-
-
-        string[,] space = new string[length, height];
-
-        Console.Clear();
-        Console.WriteLine($"fps: {fps}\n");
-        if (input == ConsoleKey.UpArrow && paddle.yPosition >= 2)
-        {
-            paddle.movePadUp();
-
-        }
-        if (input == ConsoleKey.DownArrow && paddle.yPosition < (height - 2))
-        {
-            paddle.movePadDown();
-
-        }
-
-
-
-        for (int y = 0; y < height; y++)
-        {
-
-            bool paddleHere = false;
-            bool ballHere = false;
-
-            Console.Write("\n");
-            for (int x = 0; x < length; x++)
-            {
-
-
-                //fills gameboard with space
-                if (y >= 1 && y < height - 1)
-                {
-                    //places the paddle on the board
-                    if ((y == paddle.yPosition && x < length - 1))
-                    {
-                        space[1, paddle.yPosition] = paddle.icon;
-                        space[(x + 1), paddle.yPosition] = " ";
-                        paddleHere = true;
-
-                    }
-
-                    else
-                        space[x, y] = " ";
-
-                    if (y == ball.ballLocationY && x == ball.ballLocationX)
-                    {
-                        space[ball.ballLocationX, ball.ballLocationY] = ball.icon;
-
-                        if (ball.ballLocationX >= 1 && ball.ballLocationY == 1)
-                        {
-                            Console.WriteLine("hit top wall");
-                        }
-
-                    }
-
-                }
-                //draws back wall
-                if (x == length - 1)
-                {
-                    space[x, y] = bkWall;
-                }
-                //draws the top and bottom lines of the game board
-                if (y == 0 || (y == height - 1))
-                {
-                    space[x, y] = topNBotWall;
-                }
-
-                Console.Write(space[x, y]);
-            }
-
-            fps++;
-
-
-            Thread.Sleep(1000);
-        }
-
-    }
-    */
-
-
 
         static void Main(string[] args)
         {
@@ -201,24 +143,36 @@ namespace Pong
             Ball b = new Ball();
             Display display = new Display();
             ConsoleKey input = Console.ReadKey().Key;
-
+            
 
             Task.Run(async () =>
             {
-
                 while (true)
                 {
-                    display.gameSpace(25, 20, b, p, input);
-                    await Task.Delay(1000);
+                    
+
+                    display.gameSpace(25, 20, b, p);
+                    await Task.Delay(150);
+
+                    
                 }
             });
-            while (true)
-            {
 
+            while (true) {
+                input = Console.ReadKey().Key;
+                
+                if (input == ConsoleKey.UpArrow)
+                {
+                    p.movePadUp();
+                   
+                }
+
+                if (input == ConsoleKey.DownArrow)
+                {
+                    p.movePadDown();
+
+                }
             }
-
-
-
 
         }
     }
